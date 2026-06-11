@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Erick &amp; Laura</title>
+<meta name="theme-color" content="#FAF8F5" />
+
+<!-- ===================== FONTES (Google Fonts) ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ======================================================================
+   PALETA E TOKENS
+   (Pra trocar as cores do site inteiro, mude só aqui.)
+   ====================================================================== */
+:root{
+  --bg:        #FAF8F5;   /* branco quente (fundo) */
+  --bg-pure:   #FFFFFF;   /* branco puro (cards)   */
+  --beige:     #E8E0D5;   /* bege claro            */
+  --beige-deep:#D9CFC1;   /* bege mais fechado     */
+  --ink:       #2E2A26;   /* texto escuro (contraste AA) */
+  --ink-soft:  rgba(46,42,38,.58); /* texto secundário */
+  --ink-faint: rgba(46,42,38,.32); /* detalhes tênues  */
+  --accent:    #C9A6A0;   /* rosé/terracota apagado (acento) */
+
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans:  "Inter", system-ui, -apple-system, sans-serif;
+
+  --maxw: 460px;          /* largura útil (mobile-first) */
+  --pad:  26px;           /* respiro lateral padrão */
+}
+
+/* ======================================================================
+   BASE
+   ====================================================================== */
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img{ display:block; max-width:100%; }
+button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+/* foco visível pra acessibilidade (teclado) */
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+
+/* envelope central — segura tudo num "trilho" estreito tipo celular */
+.wrap{ width:100%; max-width:var(--maxw); margin:0 auto; }
+
+/* espaçamento generoso entre seções */
+.section{
+  padding:50px var(--pad);
+}
+
+/* títulos de seção */
+.eyebrow{
+  font-family:var(--sans);
+  font-size:.72rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:14px;
+}
+.section-title{
+  font-family:var(--serif);
+  font-weight:500;
+  font-size:2.1rem;
+  letter-spacing:.01em;
+  line-height:1.15;
+}
+
+/* revelar ao rolar (suave) */
+.reveal{ opacity:0; transform:translateY(22px); transition:opacity .9s ease, transform .9s ease; }
+.reveal.is-in{ opacity:1; transform:none; }
+
+/* placeholder quando a imagem ainda não existe */
+.sem-imagem{
+  background:
+    repeating-linear-gradient(135deg, var(--beige) 0 14px, var(--beige-deep) 14px 28px);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--ink-soft);
+}
+.sem-imagem__txt{
+  font-family:var(--sans); font-size:.72rem; letter-spacing:.04em;
+  background:var(--bg-pure); padding:6px 10px; border-radius:6px;
+  box-shadow:0 2px 10px rgba(46,42,38,.08);
+  max-width:80%; text-align:center; word-break:break-word;
+}
+
+/* ======================================================================
+   1. HERO (foto de capa, tela cheia)
+   ====================================================================== */
+.hero{
+  position:relative;
+  height:100svh; min-height:560px;
+  overflow:hidden;
+}
+.hero__bg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover; z-index:0;
+}
+.hero__bg.sem-imagem{ width:100%; height:100%; }
+
+/* ======================================================================
+   2. PLAYER DE MÚSICA (estilo Spotify)
+   ====================================================================== */
+.player{ background:var(--bg); }
+.player__card{
+  width:100%; max-width:340px; margin:0 auto;
+  background:var(--bg-pure);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 18px 50px rgba(46,42,38,.10), 0 2px 8px rgba(46,42,38,.05);
+}
+.player__art{
+  width:100%; aspect-ratio:1/1;
+  border-radius:14px; overflow:hidden;
+  background:var(--beige);
+}
+.player__art img{ width:100%; height:100%; object-fit:cover; }
+.player__art.sem-imagem{ aspect-ratio:1/1; }
+.player__meta{ margin:18px 4px 4px; }
+.player__track{
+  font-family:var(--serif); font-size:1.65rem; font-weight:600; line-height:1.1;
+}
+.player__artist{ color:var(--ink-soft); font-size:.9rem; margin-top:2px; }
+
+.player__bar{
+  position:relative; height:5px; border-radius:99px;
+  background:var(--beige); margin:20px 4px 8px;
+  cursor:pointer;
+}
+.player__fill{
+  position:absolute; left:0; top:0; bottom:0; width:0%;
+  background:var(--accent); border-radius:99px;
+  transition:width .2s linear;
+}
+.player__fill::after{ /* "bolinha" no fim da barra */
+  content:""; position:absolute; right:-5px; top:50%;
+  width:11px; height:11px; border-radius:50%;
+  background:var(--accent); transform:translateY(-50%);
+  box-shadow:0 1px 4px rgba(46,42,38,.25);
+}
+.player__times{
+  display:flex; justify-content:space-between;
+  font-size:.74rem; color:var(--ink-soft); margin:0 4px;
+  font-variant-numeric:tabular-nums;
+}
+.player__play{
+  display:flex; align-items:center; justify-content:center;
+  width:58px; height:58px; border-radius:50%;
+  background:var(--ink); color:var(--bg-pure);
+  margin:18px auto 6px;
+  transition:transform .15s ease, background .15s ease;
+}
+.player__play:active{ transform:scale(.92); }
+.player__play svg{ width:22px; height:22px; }
+.player__hint{
+  text-align:center; font-size:.72rem; color:var(--ink-faint);
+  margin-top:4px; min-height:1em;
+}
+
+/* ======================================================================
+   3 e 6. TIMERS (contadores ao vivo) — componente compartilhado
+   ====================================================================== */
+.timer{ text-align:center; background:var(--bg); }
+.timer--final{ background:var(--beige); }
+.timer__label{
+  font-family:var(--sans); font-size:.74rem; letter-spacing:.28em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:20px;
+}
+.count{
+  display:flex; align-items:flex-start; justify-content:center;
+  gap:14px; flex-wrap:wrap;
+}
+.count__unit{ display:flex; flex-direction:column; align-items:center; min-width:52px; }
+.count__num{
+  font-family:"Playfair Display", Georgia, serif; font-weight:500;
+  font-size:clamp(2.3rem, 11.5vw, 3.1rem); line-height:1;
+  font-variant-numeric:lining-nums tabular-nums; color:var(--ink);
+}
+.count__cap{
+  font-family:var(--sans); font-size:.6rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-soft); margin-top:9px;
+}
+.timer__note{ margin-top:30px; font-size:1.4rem; }
+.timer__celebra{
+  font-family:var(--serif); font-style:italic; font-size:1.9rem;
+  line-height:1.3; color:var(--ink); max-width:340px; margin:0 auto;
+}
+
+
+/* ======================================================================
+   4. CARTA (caixa de texto + "Ler tudo" + popup)
+   ====================================================================== */
+.carta{ background:var(--bg); }
+.carta__inner{ width:100%; max-width:var(--maxw); margin:0 auto; }
+.carta__card{
+  position:relative;
+  background:var(--bg-pure);
+  border:1px solid var(--beige);
+  border-radius:18px;
+  padding:30px 26px 64px;
+  max-height:320px; overflow:hidden;
+  box-shadow:0 14px 40px rgba(46,42,38,.07);
+  margin-top:0;
+}
+.carta__texto{
+  font-family:var(--serif); font-size:1.28rem; line-height:1.62;
+  color:var(--ink); white-space:pre-line;
+}
+/* fade que "corta" o texto excedente na base */
+.carta__fade{
+  position:absolute; left:0; right:0; bottom:0; height:120px;
+  background:linear-gradient(to bottom, rgba(255,255,255,0), var(--bg-pure) 72%);
+  pointer-events:none;
+}
+.carta__abrir{
+  position:absolute; left:22px; bottom:18px; z-index:2;
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--sans); font-size:.78rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink);
+  background:var(--bg); border:1px solid var(--beige-deep);
+  padding:10px 16px; border-radius:99px;
+  transition:background .15s ease, transform .15s ease;
+}
+.carta__abrir:active{ transform:scale(.96); }
+.carta__abrir svg{ width:13px; height:13px; }
+
+/* popup (modal) — retângulo vertical com rolagem interna */
+.modal{
+  position:fixed; inset:0; z-index:50;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  background:rgba(30,26,22,.55);
+  opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease;
+}
+.modal.aberto{ opacity:1; visibility:visible; }
+.modal__caixa{
+  position:relative;
+  background:var(--bg-pure);
+  width:100%; max-width:400px; max-height:82vh;
+  border-radius:20px;
+  display:flex; flex-direction:column;
+  transform:translateY(16px) scale(.98); transition:transform .3s ease;
+  box-shadow:0 30px 70px rgba(30,26,22,.35);
+}
+.modal.aberto .modal__caixa{ transform:none; }
+.modal__fechar{
+  position:absolute; top:12px; right:12px; z-index:3;
+  width:38px; height:38px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg); color:var(--ink);
+}
+.modal__fechar svg{ width:16px; height:16px; }
+.modal__scroll{
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:54px 28px 34px;
+}
+.modal__titulo{
+  font-family:var(--serif); font-style:italic; font-size:1.1rem;
+  color:var(--accent); margin-bottom:18px;
+}
+.modal__texto{
+  font-family:var(--serif); font-size:1.24rem; line-height:1.68;
+  color:var(--ink); white-space:pre-line;
+}
+
+/* ======================================================================
+   5. GALERIA (carrossel horizontal + lightbox)
+   ====================================================================== */
+.galeria{ background:var(--bg); padding-left:0; padding-right:0; }
+.galeria__head{ padding:0 var(--pad); max-width:var(--maxw); margin:0 auto 20px; }
+.galeria__trilho{
+  display:flex; gap:16px;
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  padding:6px var(--pad) 14px;
+  scrollbar-width:none;
+}
+.galeria__trilho::-webkit-scrollbar{ display:none; }
+.foto{
+  flex:0 0 78%;
+  scroll-snap-align:center;
+}
+.foto__quadro{
+  width:100%; aspect-ratio:3/4;
+  border-radius:16px; overflow:hidden;
+  background:var(--beige);
+  box-shadow:0 12px 34px rgba(46,42,38,.10);
+}
+.foto__quadro img{ width:100%; height:100%; object-fit:cover; }
+.foto__quadro.sem-imagem{ aspect-ratio:3/4; }
+.foto__cap{
+  margin-top:12px; text-align:center;
+  font-family:var(--sans); font-size:.82rem; letter-spacing:.02em;
+  color:var(--ink-soft);
+}
+.galeria__vazia{
+  padding:0 var(--pad); max-width:var(--maxw); margin:0 auto;
+  color:var(--ink-soft); font-size:.92rem; line-height:1.7;
+}
+
+/* lightbox (foto ampliada em tela cheia) */
+.lightbox{
+  position:fixed; inset:0; z-index:60;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:18px; padding:30px 18px;
+  background:rgba(24,20,17,.94);
+  opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease;
+}
+.lightbox.aberto{ opacity:1; visibility:visible; }
+.lightbox__img{
+  max-width:100%; max-height:78vh;
+  border-radius:10px; object-fit:contain;
+}
+.lightbox__cap{
+  color:rgba(255,255,255,.9); font-size:.9rem; letter-spacing:.03em;
+  text-align:center;
+}
+.lightbox__fechar{
+  position:absolute; top:18px; right:18px;
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.12); color:#fff;
+}
+.lightbox__fechar svg{ width:18px; height:18px; }
+.lightbox__nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:46px; height:46px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.12); color:#fff;
+  transition:background .15s ease;
+}
+.lightbox__nav:active{ background:rgba(255,255,255,.26); }
+.lightbox__nav svg{ width:20px; height:20px; }
+.lightbox__nav--prev{ left:14px; }
+.lightbox__nav--next{ right:14px; }
+
+/* ======================================================================
+   FILHOS — como serão nossos filhos
+   ====================================================================== */
+.filhos{ text-align:center; background:var(--bg); }
+.filhos__titulo{ margin-bottom:30px; line-height:1.18; }
+.filhos__grid{
+  display:flex; gap:16px; justify-content:center;
+  max-width:var(--maxw); margin:0 auto;
+}
+.filhos__item{ flex:1 1 0; max-width:50%; margin:0; }
+.filhos__quadro{
+  width:100%; aspect-ratio:3/4; border-radius:16px; overflow:hidden;
+  background:var(--beige); box-shadow:0 12px 34px rgba(46,42,38,.10);
+}
+.filhos__quadro img{ width:100%; height:100%; object-fit:cover; }
+.filhos__quadro.sem-imagem{ aspect-ratio:3/4; }
+.filhos__cap{
+  margin-top:12px; font-family:var(--sans); font-size:.7rem;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft);
+}
+
+/* ======================================================================
+   ROLETA — quem está sempre certo
+   ====================================================================== */
+.roleta{ text-align:center; background:var(--beige); }
+.roleta__titulo{ margin-bottom:34px; line-height:1.18; }
+.roleta__palco{
+  position:relative; width:248px; height:248px; margin:0 auto 8px;
+}
+/* ponteiro fixo no topo, apontando pra dentro da roda */
+.roleta__ponteiro{
+  position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+  width:0; height:0; z-index:3;
+  border-left:13px solid transparent;
+  border-right:13px solid transparent;
+  border-top:20px solid var(--ink);
+  filter:drop-shadow(0 2px 3px rgba(46,42,38,.3));
+}
+.roleta__roda{
+  position:absolute; inset:0; border-radius:50%;
+  /* metade de cima = Laura (rosé), metade de baixo = Erick (escuro) */
+  background:conic-gradient(from 90deg, #4a4540 0deg 180deg, var(--accent) 180deg 360deg);
+  box-shadow:0 14px 40px rgba(46,42,38,.22), inset 0 0 0 6px var(--bg-pure);
+  transition:transform 4.2s cubic-bezier(.17,.67,.18,1);
+}
+.roleta__nome{
+  position:absolute; left:50%; transform:translateX(-50%);
+  font-family:var(--serif); font-weight:600; font-size:1.5rem;
+  color:#fff; letter-spacing:.02em;
+}
+.roleta__nome--cima{ top:26px; }
+.roleta__nome--baixo{ bottom:26px; }
+.roleta__btn{
+  margin-top:14px;
+  font-family:var(--sans); font-size:.8rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--bg-pure);
+  background:var(--ink); padding:13px 34px; border-radius:99px;
+  transition:transform .15s ease, opacity .15s ease;
+}
+.roleta__btn:active{ transform:scale(.96); }
+.roleta__btn[disabled]{ opacity:.5; }
+.roleta__resultado{
+  margin-top:20px; min-height:1.6em;
+  font-family:var(--serif); font-style:italic; font-size:1.25rem;
+  color:var(--ink);
+}
+
+/* ======================================================================
+   PERGUNTA FINAL — botão "Não" que foge
+   ====================================================================== */
+.pergunta{ text-align:center; background:var(--bg); }
+.pergunta__titulo{ margin-bottom:8px; line-height:1.18; }
+.pergunta__palco{
+  position:relative; height:210px;
+  max-width:var(--maxw); margin:0 auto;
+}
+.pergunta__sim, .pergunta__nao{
+  font-family:var(--sans); font-size:.92rem; letter-spacing:.1em;
+  text-transform:uppercase; padding:15px 40px; border-radius:99px;
+  position:absolute; left:50%; transform:translateX(-50%);
+}
+.pergunta__sim{
+  top:42px; background:var(--accent); color:#fff;
+  box-shadow:0 10px 26px rgba(201,166,160,.45);
+  transition:transform .15s ease;
+}
+.pergunta__sim:active{ transform:translateX(-50%) scale(.95); }
+.pergunta__nao{
+  top:118px; background:var(--bg-pure); color:var(--ink);
+  border:1px solid var(--beige-deep);
+  transition:left .18s ease, top .18s ease;
+}
+.pergunta__resposta{
+  margin-top:16px; min-height:1.6em;
+  font-family:var(--serif); font-style:italic; font-size:1.35rem; color:var(--ink);
+}
+
+/* ======================================================================
+   VERSÍCULO — fechamento
+   ====================================================================== */
+.versiculo{ text-align:center; background:var(--beige); }
+.versiculo__texto{
+  font-family:var(--sans); font-style:normal; font-size:1rem;
+  line-height:1.6; max-width:340px; margin:0 auto; color:var(--ink);
+}
+.versiculo__ref{
+  margin-top:16px; font-family:var(--sans); font-size:.72rem;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--accent);
+}
+
+/* ======================================================================
+   FECHAMENTO — logo do casal no fim da página
+   ====================================================================== */
+.fim{
+  /* fundo escuro elegante pra dar contraste ao logo.
+     Se o seu logo for ESCURO, troque por: background:var(--bg);  */
+  background:var(--ink);
+  padding:34px var(--pad);
+  display:flex; justify-content:center; align-items:center;
+}
+.fim__logo{
+  width:auto; height:auto;
+  max-width:104px; max-height:72px;
+  object-fit:contain;
+  opacity:.95;
+  transform:translateX(-7px); /* leve ajuste pra parecer centralizado */
+}
+
+/* ======================================================================
+   RESPEITAR "REDUZIR MOVIMENTO"
+   ====================================================================== */
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; scroll-behavior:auto !important; }
+  .reveal{ opacity:1; transform:none; transition:none; }
+}
+
+/* desktop: mantém tudo num trilho estreito e centralizado (não quebra) */
+@media (min-width:760px){
+  .hero{ min-height:640px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     LISTA DE FOTOS DA GALERIA  (já preenchida com as suas fotos!)
+
+     Você não precisa mexer aqui — só se quiser adicionar/remover/reordenar.
+     • Cada item é o nome do arquivo (que também é a LEGENDA da foto).
+     • NÃO precisa pôr a extensão: o site acha .jpg/.png/.jpeg sozinho.
+     • As fotos ficam na pasta  assets/fotos/  do repositório.
+     • As capas (foto-inicial e capa-musica) NÃO entram nesta lista.
+     • A ordem da lista = a ordem que aparece na galeria.
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+const FOTOS = [
+  "24-02-25 Aniversário da Laura - nem sonhava que ia casar comigo ainda",
+  "29.06.25 - o dia mais feliz da vida da Laura",
+  "19-07-25 Sesc - a primeira foto postada no story juntos",
+  "24-08-25 primeira festa dos jovens juntos",
+  "14-09-25 Pantchos - ela não gostou do lanche dela e trocou com o meu",
+  "28-09-25 festinha das senhoras",
+  "17-10-25 Fornô - os doidos por pastrame",
+  "30-10-25 Rango Brabo Podpah - Amassei o meu lanche e o dela",
+  "22-11-25 festa dos adolescentes - fotinha de lei no painel do seu Daniel",
+  "25-12-25 O natal mais quente que ja existiu",
+  "01-01-26 Campos do Jordão - viagem 1 de 15742",
+  "16-02-26 Rodiziozão de Japa (demos preju pro estabelecimento)",
+  "16-02-26 Sesc - Aqui Erick demonstra uma masculinidade duvidosa",
+  "16-02-26 Sesc - onde Erick descobriu seu dom em pintura",
+  "01-03-26 O Au e o Tismo jantando",
+  "04-03-26 pastelzão top",
+  "06-03-26 Stand-up Thiago Ventura - boca doeu de tanto rir",
+  "10-03-26 Aniversario da Pamella - testando efeito de foto que a diva viu no tiktok",
+  "14-03-26 cha Serena - Erick pensando em que ano teremos um filho",
+  "14-03-26 Essa roupa dela divide opiniões do publico entre fãs e haters, (99% é hater, mas ela e o namorado gosta então é o que importa)",
+  "04-04-26 Aqui o muleque ta apaixonado",
+  "04-04-26 Nem me lembre desse dia... Era essa papinha podre entrando na minha guela, no meu nariz, na barba... passa pra próxima foto por favor",
+  "25-04-26 O dia que fomos tirar sangue e achei que ia ficar solteiro... Grande foi a peleja mas Deus deu vitória",
+  "01-05-26 a diva fazendo botox no namorado (queimou a orelha dele, sim, mas isso é só um detalhe...)",
+  "01-05-26 Comprando boné combinando pra ir cavalgar",
+  "01-05-26 Os novos fazendeiros (novo hobbie desbloqueado)",
+  "03-05-26 a diva casando o cunhado"
+  // pra adicionar mais: nova linha, nome entre aspas, vírgula no fim da linha de cima
+];
+</script>
+
+<!-- ====================================================================
+     1. FOTO DE CAPA (HERO) — só a foto, tela cheia
+     >>> Sua foto de capa: assets/fotos/foto-inicial.(jpg/png/jpeg)
+     ==================================================================== -->
+<header class="hero" id="topo">
+  <!-- o JS carrega a foto-inicial e tenta a extensão certa sozinho -->
+  <img class="hero__bg" id="fotoHero" alt="Erick e Laura" />
+</header>
+
+<!-- ====================================================================
+     2. PLAYER DE MÚSICA (estilo Spotify)
+     >>> Capa do player:  assets/fotos/capa-musica.jpg
+     >>> Música (MP3):    assets/musica/fogo-ardera.mp3   <-- VOCÊ coloca este arquivo
+     ==================================================================== -->
+<section class="section player reveal" id="player">
+  <div class="player__card">
+    <div class="player__art">
+      <!-- o JS carrega a capa-musica e tenta a extensão certa sozinho -->
+      <img id="fotoPlayer" alt="Capa da música" />
+    </div>
+    <div class="player__meta">
+      <p class="player__track">Fogo Arderá</p>
+      <p class="player__artist">Alexsander Lúcio</p>
+    </div>
+
+    <!-- barra de progresso (toque pra avançar/voltar) -->
+    <div class="player__bar" id="barra" role="slider" tabindex="0"
+         aria-label="Progresso da música" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="player__fill" id="preenchimento"></div>
+    </div>
+    <div class="player__times">
+      <span id="tempoAtual">0:00</span>
+      <span id="tempoTotal">0:00</span>
+    </div>
+
+    <!-- play / pause (sem botões de passar faixa, de propósito) -->
+    <button class="player__play" id="botaoPlay" aria-label="Tocar música">
+      <svg id="iconePlay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="iconePause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+    </button>
+  </div>
+
+  <!--
+    AUDIO: o navegador no celular BLOQUEIA tocar sozinho, por isso o play é no toque.
+    Se o arquivo ainda não existir, o botão mostra um aviso discreto.
+  -->
+  <audio id="audio" preload="metadata"></audio>
+</section>
+
+<!-- ====================================================================
+     3. TIMER "JUNTOS HÁ..." (conta pra cima, ao vivo)
+     >>> Data de início configurada no JS: 29/06/2025 17:00 (Brasília)
+     ==================================================================== -->
+<section class="section timer reveal">
+  <p class="timer__label">estamos juntos há</p>
+  <div class="count">
+    <div class="count__unit"><span class="count__num" id="jAnos">0</span><span class="count__cap" id="jAnosCap">anos</span></div>
+    <div class="count__unit"><span class="count__num" id="jMeses">0</span><span class="count__cap" id="jMesesCap">meses</span></div>
+    <div class="count__unit"><span class="count__num" id="jDias">0</span><span class="count__cap" id="jDiasCap">dias</span></div>
+  </div>
+  <div class="count" style="margin-top:20px">
+    <div class="count__unit"><span class="count__num" id="jHoras">00</span><span class="count__cap" id="jHorasCap">horas</span></div>
+    <div class="count__unit"><span class="count__num" id="jMin">00</span><span class="count__cap" id="jMinCap">minutos</span></div>
+    <div class="count__unit"><span class="count__num" id="jSeg">00</span><span class="count__cap" id="jSegCap">segundos</span></div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     4. CARTA — caixa com "Ler tudo" + popup completo
+     >>> EDITE O TEXTO DA CARTA NUM LUGAR SÓ: dentro de #cartaFonte (logo abaixo).
+         Ele é copiado automaticamente pro cartão e pro popup.
+     ==================================================================== -->
+<section class="section carta reveal">
+  <div class="carta__inner">
+    <div class="carta__card">
+      <div class="carta__texto" id="cartaPreview"><!-- preenchido pelo JS --></div>
+      <div class="carta__fade"></div>
+      <button class="carta__abrir" id="abrirCarta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        Ler tudo
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FONTE ÚNICA DO TEXTO DA CARTA (edite só aqui) -->
+<template id="cartaFonte">Se alguém me dissesse que hoje eu estaria comemorando essa data com você, eu não acreditaria, ainda parece um sonho que não caiu a ficha que realizei, algo que parecia tão distante há 1 ano atrás. Lembro como se fosse hoje o dia que decidi te chamar pra sair, o frio na barriga, o medo, sem conseguir dormir à noite. E também do dia que falei o que sentia por você na garagem, aquele dia eu tinha certeza que não existia nenhuma pessoa mais feliz que eu no mundo kkkkk Você é linda, simpática, inteligente, verdadeira, dedicada, madura, leal, mulher de Deus, compromissada, estilosa, cheirosa, esforçada, engraçada, leve... e mesmo assim, dizer que eu te amo por alguma de suas qualidades é muito superficial, o que eu sinto por você transcende qualquer razão, motivo ou lógica, é INEXPLICÁVEL! Você é um presente de Deus, uma resposta de oração e uma promessa de Deus. Uma mulher que me faz um homem melhor todos os dias, que me apoia em tudo, me incentiva, me aconselha e está comigo em tudo. Obrigado pelas críticas de beber água, arrumar a postura, fazer exercícios kkkkkk me ajudou bastante. Você é a pessoa que eu quero ter ao meu lado pro resto da vida, compartilhando tudo com você, nós estaremos juntos em tudo, nos maiores dias de conquistas e nos dias mais desafiadores, seremos eu, você e Deus, e daqui uns aninhos nossos meninos kkkkkk Eu te amo muito e vou sempre estar aqui do seu lado. Feliz dia dos namorados e 1 ano minha princesa! 🤍</template>
+
+<!-- popup da carta -->
+<div class="modal" id="modalCarta" aria-hidden="true">
+  <div class="modal__caixa" role="dialog" aria-modal="true" aria-label="Carta completa">
+    <button class="modal__fechar" id="fecharCarta" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="modal__scroll">
+      <p class="modal__titulo">pra minha princesa</p>
+      <div class="modal__texto" id="cartaCompleta"><!-- preenchido pelo JS --></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     5. GALERIA — "Nossa galeria" (carrossel + lightbox)
+     >>> As fotos vêm da lista FOTOS lá no TOPO deste arquivo.
+     >>> A legenda de cada foto = o nome do arquivo, sem a extensão.
+     ==================================================================== -->
+<section class="section galeria reveal">
+  <div class="galeria__head">
+    <p class="eyebrow">momentos</p>
+    <h2 class="section-title">Nossa galeria</h2>
+  </div>
+  <div class="galeria__trilho" id="galeriaTrilho"><!-- preenchido pelo JS --></div>
+  <div class="galeria__vazia" id="galeriaVazia" style="display:none"></div>
+</section>
+
+<!-- lightbox (foto ampliada) -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox__fechar" id="fecharLightbox" aria-label="Fechar foto">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="Foto anterior">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <button class="lightbox__nav lightbox__nav--next" id="lbNext" aria-label="Próxima foto">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+  </button>
+  <img class="lightbox__img" id="lightboxImg" src="" alt="" />
+  <p class="lightbox__cap" id="lightboxCap"></p>
+</div>
+
+<!-- ====================================================================
+     FILHOS — "como serão nossos filhos segundo o ChatGPT"
+     >>> Fotos: assets/fotos/menina.* e assets/fotos/menino.*
+     ==================================================================== -->
+<section class="section filhos reveal">
+  <h2 class="section-title filhos__titulo">Como serão nossos<br>filhos, segundo<br>o ChatGPT</h2>
+  <div class="filhos__grid">
+    <figure class="filhos__item">
+      <div class="filhos__quadro"><img id="fotoMenina" loading="lazy" alt="Nossa menina" /></div>
+      <figcaption class="filhos__cap">menina</figcaption>
+    </figure>
+    <figure class="filhos__item">
+      <div class="filhos__quadro"><img id="fotoMenino" loading="lazy" alt="Nosso menino" /></div>
+      <figcaption class="filhos__cap">menino</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ====================================================================
+     ROLETA — "quem está sempre certo" (sempre cai na Laura 😄)
+     ==================================================================== -->
+<section class="section roleta reveal">
+  <h2 class="section-title roleta__titulo">Roleta pra saber quem<br>sempre está certo na relação</h2>
+  <div class="roleta__palco">
+    <div class="roleta__ponteiro" aria-hidden="true"></div>
+    <div class="roleta__roda" id="roda">
+      <span class="roleta__nome roleta__nome--cima">Laura</span>
+      <span class="roleta__nome roleta__nome--baixo">Erick</span>
+    </div>
+  </div>
+  <button class="roleta__btn" id="girarBtn">Girar</button>
+  <p class="roleta__resultado" id="roletaRes" aria-live="polite"></p>
+</section>
+
+<!-- ====================================================================
+     6. TIMER FINAL — contagem regressiva pro 1 ano
+     >>> Data alvo no JS: 29/06/2026 00:00 (Brasília)
+     ==================================================================== -->
+<section class="section timer timer--final reveal">
+  <p class="timer__label">falta para o nosso 1 ano</p>
+  <div id="blocoFinal">
+    <div class="count">
+      <div class="count__unit"><span class="count__num" id="fMeses">0</span><span class="count__cap" id="fMesesCap">meses</span></div>
+      <div class="count__unit"><span class="count__num" id="fDias">0</span><span class="count__cap" id="fDiasCap">dias</span></div>
+    </div>
+    <div class="count" style="margin-top:20px">
+      <div class="count__unit"><span class="count__num" id="fHoras">00</span><span class="count__cap" id="fHorasCap">horas</span></div>
+      <div class="count__unit"><span class="count__num" id="fMin">00</span><span class="count__cap" id="fMinCap">minutos</span></div>
+      <div class="count__unit"><span class="count__num" id="fSeg">00</span><span class="count__cap" id="fSegCap">segundos</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     PERGUNTA FINAL — "aceita mais um ano?" (o botão Não foge)
+     ==================================================================== -->
+<section class="section pergunta reveal">
+  <h2 class="section-title pergunta__titulo">Aceita passar mais<br>um ano comigo?</h2>
+  <div class="pergunta__palco" id="perguntaPalco">
+    <button class="pergunta__sim" id="btnSim">Sim</button>
+    <button class="pergunta__nao" id="btnNao">Não</button>
+  </div>
+  <p class="pergunta__resposta" id="perguntaResp" aria-live="polite"></p>
+</section>
+
+<!-- ====================================================================
+     VERSÍCULO — fechamento
+     ==================================================================== -->
+<section class="section versiculo reveal">
+  <p class="versiculo__texto">"Acima de tudo, porém, revistam-se do amor, que é o elo perfeito."</p>
+  <p class="versiculo__ref">Colossenses 3:14</p>
+</section>
+
+<!-- ====================================================================
+     FECHAMENTO — logo do casal
+     >>> Seu logo: assets/logo/le-1.png
+     ==================================================================== -->
+<footer class="fim">
+  <!-- o JS tenta png/PNG/svg/jpg sozinho; se faltar, some sem quebrar -->
+  <img class="fim__logo" id="logoFim" alt="Logo Erick & Laura" />
+</footer>
+
+<!-- (A lista de fotos FOTOS já está definida lá no topo deste arquivo.) -->
+
+<script>
+/* ======================================================================
+   AJUDANTE: imagem que faltou → mostra um espaço reservado elegante
+   ====================================================================== */
+function faltouImagem(img){
+  const alvo = img.parentElement;
+  alvo.classList.add('sem-imagem');
+  img.style.display = 'none';
+  const nome = img.getAttribute('data-nome') || 'foto';
+  if(!alvo.querySelector('.sem-imagem__txt')){
+    const t = document.createElement('span');
+    t.className = 'sem-imagem__txt';
+    t.textContent = nome;
+    alvo.appendChild(t);
+  }
+}
+
+/* ======================================================================
+   AJUDANTE: carrega uma foto tentando várias extensões automaticamente
+   (assim funciona seja .jpg, .png, .jpeg etc — você não precisa saber qual)
+   ====================================================================== */
+const EXTENSOES_IMG = ['jpg','jpeg','png','webp','JPG','JPEG','PNG'];
+function carregarFoto(img, nomeBase){
+  // nomeBase = nome do arquivo SEM a extensão (ex: "foto-inicial")
+  const base = 'assets/fotos/' + encodeURIComponent(nomeBase); // espaços/acentos ok
+  let i = 0;
+  img.setAttribute('data-nome', nomeBase);
+  img.onerror = function(){
+    i++;
+    if(i < EXTENSOES_IMG.length){
+      img.src = base + '.' + EXTENSOES_IMG[i];   // tenta a próxima extensão
+    } else {
+      img.onerror = null;
+      faltouImagem(img);                          // nenhuma funcionou → placeholder
+    }
+  };
+  img.src = base + '.' + EXTENSOES_IMG[0];        // começa pela primeira (.jpg)
+}
+
+// carrega as duas capas (nomes dos SEUS arquivos)
+carregarFoto(document.getElementById('fotoHero'),   'foto-inicial');
+carregarFoto(document.getElementById('fotoPlayer'), 'capa-musica');
+
+// carrega as fotos dos "filhos" (menina / menino)
+carregarFoto(document.getElementById('fotoMenina'), 'menina');
+carregarFoto(document.getElementById('fotoMenino'), 'menino');
+
+// carrega o logo do casal (assets/logo/le-1.*) tentando várias extensões
+(function(){
+  const logo = document.getElementById('logoFim');
+  const exts = ['png','PNG','svg','webp','jpg','jpeg'];
+  let i = 0;
+  logo.onerror = function(){
+    i++;
+    if(i < exts.length){ logo.src = 'assets/logo/' + encodeURIComponent('le-1') + '.' + exts[i]; }
+    else { logo.onerror = null; logo.style.display = 'none'; } // sem logo: some sem quebrar
+  };
+  logo.src = 'assets/logo/le-1.png';
+})();
+
+
+/* ======================================================================
+   PLAYER DE MÚSICA
+   ====================================================================== */
+(function(){
+  const audio   = document.getElementById('audio');
+  const botao   = document.getElementById('botaoPlay');
+  const iPlay   = document.getElementById('iconePlay');
+  const iPause  = document.getElementById('iconePause');
+  const barra   = document.getElementById('barra');
+  const fill    = document.getElementById('preenchimento');
+  const tAtual  = document.getElementById('tempoAtual');
+  const tTotal  = document.getElementById('tempoTotal');
+
+  function fmt(seg){
+    if(!isFinite(seg) || seg < 0) seg = 0;
+    const m = Math.floor(seg/60);
+    const s = Math.floor(seg%60);
+    return m + ':' + String(s).padStart(2,'0');
+  }
+
+  // ---- procura o arquivo da música tentando vários nomes/extensões ----
+  // (assim funciona seja "O FOGO ARDERÁ.mp3", "Fogo Arderá.mp3", "fogo-ardera.mp3"...)
+  const CANDIDATOS_MUSICA = [
+    'O FOGO ARDERÁ.mp3', 'O FOGO ARDERA.mp3', 'O Fogo Arderá.mp3', 'o fogo arderá.mp3',
+    'fogo-ardera.mp3', 'FOGO ARDERÁ.mp3', 'Fogo Arderá.mp3', 'fogo arderá.mp3',
+    'FOGO ARDERA.mp3', 'Fogo Ardera.mp3', 'fogo ardera.mp3', 'fogo-arderá.mp3',
+    'O FOGO ARDERÁ.m4a', 'fogo-ardera.m4a', 'fogo-ardera.ogg'
+  ];
+  let cm = 0;
+  function tentarMusica(){
+    if(cm < CANDIDATOS_MUSICA.length){
+      audio.src = 'assets/musica/' + encodeURIComponent(CANDIDATOS_MUSICA[cm]);
+      audio.load();
+    }
+  }
+  tentarMusica(); // começa a procurar
+
+  audio.addEventListener('loadedmetadata', () => { tTotal.textContent = fmt(audio.duration); });
+
+  audio.addEventListener('timeupdate', () => {
+    const pct = audio.duration ? (audio.currentTime/audio.duration)*100 : 0;
+    fill.style.width = pct + '%';
+    tAtual.textContent = fmt(audio.currentTime);
+    barra.setAttribute('aria-valuenow', Math.round(pct));
+  });
+
+  audio.addEventListener('ended', () => mostrar(false));
+
+  // se um nome não funcionar, tenta o próximo da lista
+  audio.addEventListener('error', () => { cm++; tentarMusica(); });
+
+  function mostrar(tocando){
+    iPlay.style.display  = tocando ? 'none' : 'block';
+    iPause.style.display = tocando ? 'block' : 'none';
+    botao.setAttribute('aria-label', tocando ? 'Pausar música' : 'Tocar música');
+  }
+
+  botao.addEventListener('click', () => {
+    if(audio.paused){
+      audio.play().then(() => mostrar(true)).catch(() => {});
+    } else {
+      audio.pause(); mostrar(false);
+    }
+  });
+
+  // tocar na barra = avançar/voltar (como no Spotify)
+  function buscar(e){
+    if(!audio.duration) return;
+    const r = barra.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    audio.currentTime = Math.max(0, Math.min(1, x/r.width)) * audio.duration;
+  }
+  barra.addEventListener('click', buscar);
+})();
+
+/* ======================================================================
+   TIMERS (ao vivo, atualizam a cada segundo)
+   ====================================================================== */
+(function(){
+  // -03:00 = horário de Brasília (o Brasil não usa mais horário de verão)
+  const INICIO = new Date('2025-06-29T17:00:00-03:00'); // começo do namoro
+  const ALVO   = new Date('2026-06-29T00:00:00-03:00'); // 1 ano (à meia-noite exata)
+
+  const dois = n => String(n).padStart(2,'0');
+  const plural = (n, sing, plur) => (n === 1 ? sing : plur);
+
+  // quebra a diferença (de < até) em anos, meses, dias, horas, min, seg
+  function quebrar(de, ate){
+    let y  = ate.getFullYear() - de.getFullYear();
+    let mo = ate.getMonth()    - de.getMonth();
+    let d  = ate.getDate()     - de.getDate();
+    let h  = ate.getHours()    - de.getHours();
+    let mi = ate.getMinutes()  - de.getMinutes();
+    let s  = ate.getSeconds()  - de.getSeconds();
+    if(s  < 0){ s  += 60; mi--; }
+    if(mi < 0){ mi += 60; h--;  }
+    if(h  < 0){ h  += 24; d--;  }
+    if(d  < 0){
+      const diasMesAnterior = new Date(ate.getFullYear(), ate.getMonth(), 0).getDate();
+      d += diasMesAnterior; mo--;
+    }
+    if(mo < 0){ mo += 12; y--; }
+    return {y, mo, d, h, mi, s};
+  }
+
+  // define número + legenda (com plural). padZero = mostrar com 2 dígitos (07, 08...)
+  function setUnidade(idNum, idCap, valor, sing, plur, padZero){
+    document.getElementById(idNum).textContent = padZero ? dois(valor) : valor;
+    document.getElementById(idCap).textContent = plural(valor, sing, plur);
+  }
+
+  const blocoFinal = document.getElementById('blocoFinal');
+
+  function tick(){
+    const agora = new Date();
+
+    // ---- 3. juntos há... (conta pra cima) ----
+    const j = quebrar(INICIO, agora);
+    setUnidade('jAnos',  'jAnosCap',  j.y,  'ano',     'anos');
+    setUnidade('jMeses', 'jMesesCap', j.mo, 'mês',     'meses');
+    setUnidade('jDias',  'jDiasCap',  j.d,  'dia',     'dias');
+    setUnidade('jHoras', 'jHorasCap', j.h,  'hora',    'horas',    true);
+    setUnidade('jMin',   'jMinCap',   j.mi, 'minuto',  'minutos',  true);
+    setUnidade('jSeg',   'jSegCap',   j.s,  'segundo', 'segundos', true);
+
+    // ---- 6. falta pro 1 ano (conta pra baixo) ----
+    if(agora >= ALVO){
+      blocoFinal.innerHTML =
+        '<p class="timer__celebra">Chegamos no nosso 1 ano. ' +
+        'Feliz aniversário de namoro, meu amor 🤍</p>';
+      return; // para de atualizar
+    }
+    const f = quebrar(agora, ALVO);
+    setUnidade('fMeses', 'fMesesCap', f.mo, 'mês',     'meses');
+    setUnidade('fDias',  'fDiasCap',  f.d,  'dia',     'dias');
+    setUnidade('fHoras', 'fHorasCap', f.h,  'hora',    'horas',    true);
+    setUnidade('fMin',   'fMinCap',   f.mi, 'minuto',  'minutos',  true);
+    setUnidade('fSeg',   'fSegCap',   f.s,  'segundo', 'segundos', true);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+
+/* ======================================================================
+   CARTA (preenche cartão + popup, e controla abrir/fechar)
+   ====================================================================== */
+(function(){
+  const fonte = document.getElementById('cartaFonte').innerHTML.trim();
+  document.getElementById('cartaPreview').textContent  = fonte;
+  document.getElementById('cartaCompleta').textContent = fonte;
+
+  const modal   = document.getElementById('modalCarta');
+  const abrir   = document.getElementById('abrirCarta');
+  const fechar  = document.getElementById('fecharCarta');
+
+  function abre(){ modal.classList.add('aberto'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  function fechaModal(){ modal.classList.remove('aberto'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+
+  abrir.addEventListener('click', abre);
+  fechar.addEventListener('click', fechaModal);
+  modal.addEventListener('click', e => { if(e.target === modal) fechaModal(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') fechaModal(); });
+})();
+
+/* ======================================================================
+   LIGHTBOX compartilhado (usado pela galeria E pelas fotos dos filhos)
+   ====================================================================== */
+let abrirAlbum = function(){};   // será preenchido abaixo
+(function(){
+  const lb     = document.getElementById('lightbox');
+  const lbImg  = document.getElementById('lightboxImg');
+  const lbCap  = document.getElementById('lightboxCap');
+  const lbX    = document.getElementById('fecharLightbox');
+  const lbPrev = document.getElementById('lbPrev');
+  const lbNext = document.getElementById('lbNext');
+  if(!lb) return;
+
+  let album = [];   // lista atual de {img, cap}
+  let idx = 0;
+
+  function abrir(novoAlbum, i){
+    album = novoAlbum || [];
+    if(album.length === 0) return;
+    idx = (i + album.length) % album.length;     // dá a volta no fim/início
+    const it = album[idx];
+    lbImg.src = it.img.src; lbImg.alt = it.cap; lbCap.textContent = it.cap;
+    // mostra/esconde as setas conforme tiver mais de uma foto
+    const varias = album.length > 1;
+    lbPrev.style.display = varias ? 'flex' : 'none';
+    lbNext.style.display = varias ? 'flex' : 'none';
+    lb.classList.add('aberto'); lb.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+  function navegar(dir){ if(album.length) abrir(album, idx + dir); }
+  function fechar(){
+    lb.classList.remove('aberto'); lb.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+  lbX.addEventListener('click', fechar);
+  lbPrev.addEventListener('click', () => navegar(-1));
+  lbNext.addEventListener('click', () => navegar(1));
+  lb.addEventListener('click', e => { if(e.target === lb) fechar(); }); // toque no fundo fecha
+  document.addEventListener('keydown', e => {
+    if(!lb.classList.contains('aberto')) return;
+    if(e.key === 'Escape') fechar();
+    if(e.key === 'ArrowLeft')  navegar(-1);
+    if(e.key === 'ArrowRight') navegar(1);
+  });
+
+  abrirAlbum = abrir;   // expõe pra galeria e filhos usarem
+})();
+
+/* ======================================================================
+   GALERIA (monta carrossel a partir da lista FOTOS)
+   ====================================================================== */
+(function(){
+  const trilho = document.getElementById('galeriaTrilho');
+  const vazia  = document.getElementById('galeriaVazia');
+
+  // legenda = nome do arquivo sem a extensão de imagem
+  function legenda(arquivo){
+    return arquivo.replace(/\.(jpe?g|png|webp|gif)$/i, '');
+  }
+
+  // a lista FOTOS vem do topo do arquivo; se faltar, mostra um aviso amigável
+  const lista = (typeof FOTOS !== 'undefined' && Array.isArray(FOTOS)) ? FOTOS : [];
+
+  if(lista.length === 0){
+    vazia.style.display = 'block';
+    vazia.innerHTML =
+      'Nenhuma foto na lista ainda.<br>' +
+      'Edite a lista <b>FOTOS</b> lá no topo do arquivo index.html ' +
+      'e coloque as fotos em <b>assets/fotos/</b>.';
+    return;
+  }
+
+  const itens = [];   // {img, cap} de cada foto da galeria
+
+  lista.forEach((nome, i) => {
+    const cap = legenda(nome);
+
+    const item = document.createElement('div');
+    item.className = 'foto';
+    item.innerHTML =
+      '<div class="foto__quadro">' +
+        '<img loading="lazy" alt="">' +
+      '</div>' +
+      '<p class="foto__cap"></p>';
+
+    const img = item.querySelector('img');
+    img.alt = cap;
+    item.querySelector('.foto__cap').textContent = cap;   // legenda na galeria
+    carregarFoto(img, cap);                               // detecta a extensão sozinho
+    itens.push({ img, cap });
+
+    img.addEventListener('click', () => {
+      if(img.style.display === 'none') return;            // placeholder: não amplia
+      abrirAlbum(itens, i);                               // abre o lightbox da galeria
+    });
+    trilho.appendChild(item);
+  });
+})();
+
+/* ======================================================================
+   FILHOS — clicar amplia (menina / menino) com setas pra passar
+   ====================================================================== */
+(function(){
+  const mImg = document.getElementById('fotoMenina');
+  const hImg = document.getElementById('fotoMenino');
+  if(!mImg || !hImg) return;
+
+  const album = [ {img:mImg, cap:'menina'}, {img:hImg, cap:'menino'} ];
+  mImg.style.cursor = 'zoom-in';
+  hImg.style.cursor = 'zoom-in';
+
+  mImg.addEventListener('click', () => { if(mImg.style.display !== 'none') abrirAlbum(album, 0); });
+  hImg.addEventListener('click', () => { if(hImg.style.display !== 'none') abrirAlbum(album, 1); });
+})();
+
+/* ======================================================================
+   ROLETA — sempre para na Laura (a metade de cima da roda = Laura)
+   ====================================================================== */
+(function(){
+  const roda = document.getElementById('roda');
+  const btn  = document.getElementById('girarBtn');
+  const res  = document.getElementById('roletaRes');
+  if(!roda || !btn) return;
+
+  let angulo = 0;       // rotação acumulada
+  let girando = false;
+
+  btn.addEventListener('click', () => {
+    if(girando) return;
+    girando = true;
+    btn.disabled = true;
+    res.textContent = '';
+
+    // gira algumas voltas e PARA com a metade de cima (Laura) sob o ponteiro.
+    // múltiplo de 360 = Laura volta pro topo; jitter pequeno só pra parecer natural.
+    const voltas = 5 + Math.floor(Math.random() * 3);          // 5 a 7 voltas
+    const jitter = (Math.random() * 120) - 60;                 // -60° a +60° (continua na metade da Laura)
+    const base   = Math.ceil(angulo / 360) * 360;              // próximo "Laura no topo"
+    angulo = base + voltas * 360 + jitter;
+    roda.style.transform = 'rotate(' + angulo + 'deg)';
+  });
+
+  roda.addEventListener('transitionend', () => {
+    girando = false;
+    btn.disabled = false;
+    res.textContent = 'A Laura, claro. 💁‍♀️';
+  });
+})();
+
+/* ======================================================================
+   PERGUNTA FINAL — o "Não" foge; o "Sim" responde
+   ====================================================================== */
+(function(){
+  const palco = document.getElementById('perguntaPalco');
+  const sim   = document.getElementById('btnSim');
+  const nao   = document.getElementById('btnNao');
+  const resp  = document.getElementById('perguntaResp');
+  if(!palco || !nao || !sim) return;
+
+  function fugir(){
+    const p = palco.getBoundingClientRect();
+    const b = nao.getBoundingClientRect();
+    const maxX = Math.max(0, p.width  - b.width);
+    const maxY = Math.max(0, p.height - b.height);
+    nao.style.transform = 'none';                 // tira a centralização
+    nao.style.left = (Math.random() * maxX) + 'px';
+    nao.style.top  = (Math.random() * maxY) + 'px';
+  }
+
+  // desktop: foge no hover | mobile: foge no toque (antes do clique valer)
+  nao.addEventListener('mouseover', fugir);
+  nao.addEventListener('touchstart', e => { e.preventDefault(); fugir(); }, { passive:false });
+  nao.addEventListener('click', e => { e.preventDefault(); fugir(); });
+
+  sim.addEventListener('click', () => {
+    nao.style.display = 'none';
+    sim.style.display = 'none';
+    resp.textContent = 'Eu sabia. 🤍 Então tá combinado: mais um ano, e a vida toda.';
+  });
+})();
+
+/* ======================================================================
+   REVELAR SEÇÕES AO ROLAR (suave)
+   ====================================================================== */
+(function(){
+  const alvos = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){
+    alvos.forEach(a => a.classList.add('is-in')); return;
+  }
+  const obs = new IntersectionObserver((ents) => {
+    ents.forEach(e => { if(e.isIntersecting){ e.target.classList.add('is-in'); obs.unobserve(e.target); } });
+  }, { threshold:.12 });
+  alvos.forEach(a => obs.observe(a));
+})();
+</script>
+</body>
+</html>
